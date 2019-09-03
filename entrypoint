@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# To get the acutal path to the CA certificate, we remove the 'basename' from the
+# CA_KEY_LOCATION variable (as the location variable is pointing to the actual key).
+CERT_PATH=$(echo "${CA_KEY_LOCATION}" | sed "s~$(basename ${CA_KEY_LOCATION})~~")
+if [[ ! -d "${CERT_PATH}" ]]; then
+  # No certificate directory, create!
+  echo "Certificate directory did not exist, creating..."
+  mkdir -p "${CERT_PATH}"
+fi
+
+echo "Starting keybase as a background service..."
+# Start 'run_keybase' in the background (-g flag disables the GUI).
+nohup bash -c "run_keybase -g &"
+sleep 3
+echo "Connecting to keybase server..."
+
+# Check if there is a file to use as username, else use env variable.
+if [[ -f "${KEYBASE_USERNAME_PATH}" ]]; then
+  KB_UN=$(cat "${KEYBASE_USERNAME_PATH}")
+else
+  # Don't store the username in env variable.
+  KB_UN="${KEYBASE_USERNAME}"
+  unset KEYBASE_USERNAME
+fi
+
+# Check if there is a file to use as paperkey, else use env variable.
+if [[ -f "${KEYBASE_PAPERKEY_PATH}" ]]; then
+  KB_PK=$(cat "${KEYBASE_PAPERKEY_PATH}")
+else
+  # Don't store the key in env variable.
+  KB_PK="${KEYBASE_PAPERKEY}"
+  unset KEYBASE_PAPERKEY
+fi
+
+# Log in to the keybase program with oneshot.
+keybase oneshot --username "${KB_UN}" --paperkey "${KB_PK}"
+echo "Logged in and ready!"
+if [[ ! -f ${CA_KEY_LOCATION}/ca.key ]]; then
+  # There is a generate command in the keybasesshca exe, but I prefer ecdsa and the
+  # current implementation hade some minor issues with latest versions of openssh:
+  # https://github.com/keybase/bot-sshca/pull/44
+  echo "Could not locate CA key at defined location (${CA_KEY_LOCATION}). Creating new key-pair.";
+  ssh-keygen -f "${CA_KEY_LOCATION}" -t ecdsa -b 521
+fi
+
+# If command is 'keybaseca service' logs should be output to stdout and logfile.
+if [[ "$1" = "keybaseca" && "$2" = "service" ]]; then
+  echo "Outputing logs to stdout and ${KEYBASE_SSHCA_LOG_DIR}/keybase-sshca.log"
+  exec "$@" | tee "${KEYBASE_SSHCA_LOG_DIR}/keybase-sshca.log" -a
+else
+  exec "$@"
+fi
