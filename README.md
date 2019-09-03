@@ -1,7 +1,8 @@
 # Keybase-SSH-CA
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/jitesoft/keybase-sshca.svg)](https://hub.docker.com/r/jitesoft/keybase-sshca)
+[![pipeline status](https://gitlab.com/jitesoft/dockerfiles/keybase-sshca/badges/master/pipeline.svg)](https://gitlab.com/jitesoft/dockerfiles/keybase-sshca/commits/master)
 [![Back project](https://img.shields.io/badge/Open%20Collective-Tip%20the%20devs!-blue.svg)](https://opencollective.com/jitesoft-open-source)
-[![pipeline status](https://gitlab.com/jitesoft/dockerfiles/keybase/badges/master/pipeline.svg)](https://gitlab.com/jitesoft/dockerfiles/keybase/commits/master)
 
 This image contains the [Keybase](https://keybase.io/) and [Keybase-sshca](https://github.com/keybase/bot-sshca) applications running on ubuntu linux.  
 
@@ -18,19 +19,20 @@ tag too: `1.0.0-7803a8d`
 
 ### Docker Hub
 
+* `jitesoft/keybase-sshca`
 * `latest`, `1.0.0`
 
 ### GitLab
 
-* `registry.gitlab.com/jitesoft/dockerfiles/keybase`
+* `registry.gitlab.com/jitesoft/dockerfiles/keybase-sshca`
   * `latest`, `1.0.0`
 
 ### Quay.io
 
-* `quay.io/jitesoft/keybase`
+* `quay.io/jitesoft/keybase-sshca`
   * `latest`, `1.0.0`
 
-Dockerfile can be found at [GitLab](https://gitlab.com/jitesoft/dockerfiles/keybase) and [GitHub](https://github.com/jitesoft/docker-keybase).
+Dockerfile can be found at [GitLab](https://gitlab.com/jitesoft/dockerfiles/keybase-sshca) and [GitHub](https://github.com/jitesoft/docker-keybase-sshca).
 
 ### Image labels
 
