@@ -36,7 +36,7 @@ fi
 # Log in to the keybase program with oneshot.
 keybase oneshot --username "${KB_UN}" --paperkey "${KB_PK}"
 echo "Logged in and ready!"
-if [[ ! -f ${CA_KEY_LOCATION}/ca.key ]]; then
+if [[ ! -f ${CA_KEY_LOCATION} ]]; then
   # There is a generate command in the keybasesshca exe, but I prefer ecdsa and the
   # current implementation hade some minor issues with latest versions of openssh:
   # https://github.com/keybase/bot-sshca/pull/44
@@ -47,6 +47,14 @@ fi
 # If command is 'keybaseca service' logs should be output to stdout and logfile.
 if [[ "$1" = "keybaseca" && "$2" = "service" ]]; then
   echo "Outputing logs to stdout and ${KEYBASE_SSHCA_LOG_DIR}/keybase-sshca.log"
+  echo "-----------------------------------------------------------------------"
+  echo "To add the CA to trusted authorities on the servers you wish to access"
+  echo "run the following command (on the server):"
+  echo "useradd developer -s /bin/bash -m developer # user mapped to 'developer' role."
+  echo "echo \"$(cat "${CA_KEY_LOCATION}.pub")\" > /etc/ssh/ca.pub"
+  echo "echo \"TrustedUserCAKeys /etc/ssh/ca.pub\" >> /etc/ssh/sshd_config"
+  echo "service ssh restart"
+  echo "-----------------------------------------------------------------------"
   exec "$@" | tee "${KEYBASE_SSHCA_LOG_DIR}/keybase-sshca.log" -a
 else
   exec "$@"
