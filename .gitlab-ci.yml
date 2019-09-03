@@ -20,11 +20,11 @@ build:docker:
     - |
       for TAG in $TAGS; do
         docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${TAG}
-        #docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} jitesoft/keybase-sshca:${TAG}
-        #docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} quay.io/jitesoft/keybase-sshca:${TAG}
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} jitesoft/keybase-sshca:${TAG}
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} quay.io/jitesoft/keybase-sshca:${TAG}
         docker push ${CI_REGISTRY_IMAGE}:${TAG}
-        #docker push jitesoft/keybase-sshca:${TAG}
-        #docker push quay.io/jitesoft/keybase-sshca:${TAG}
+        docker push jitesoft/keybase-sshca:${TAG}
+        docker push quay.io/jitesoft/keybase-sshca:${TAG}
       done
 
 scan:
