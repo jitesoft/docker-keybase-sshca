@@ -63,6 +63,9 @@ KEY_EXPIRATION="+12h"                            # Expiration time (prefixed wit
 KEYBASE_SSHCA_LOG_DIR="/home/keybase/.cache/keybase" # Path to directory where the logs of the keybase-ssh-ca bot should be placed.
                                                 # defaults to /home/keybase/.cache/keybase
                                                 # Note: logs are also printed to stdout.
+STRICT_LOGGING="false"                          # Sets the logging to strict or not strict. (true or false)
+ANNOUNCEMENT=""                                 # A string/text that the bot will use to announce itself in a channel.
+                                                # The following placeholders are available: {USERNAME}, {CURRENT_TEAM}, {TEAMS}.
 ```
 
 Most notable are the `KEYBASE_*` prefixed user and paperkey variables, which either filepath or env type are required to exist to allow the bot to connect.  
