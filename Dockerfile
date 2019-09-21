@@ -8,6 +8,7 @@ LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       com.jitesoft.project.registry.uri="registry.gitlab.com/jitesoft/dockerfiles/keybase-sshca"
 
 ARG VERSION
+ARG FINGERPRINT="222B85B0F90BE2D24CFEB93F47484E50656D16C7"
 
 ENV TEAMS="" \
     KEYBASE_USERNAME="" \
