@@ -29,7 +29,7 @@ COPY ./entrypoint /usr/local/bin/entrypoint
 
 RUN apk add --no-cache openssh-client ca-certificates \
  && chmod +x /usr/local/bin/keybaseca \
- && chmod +x /usr/local/bin/entrypoint \
+ && chmod +x /usr/local/bin/entrypoint
 
 USER keybase
 ENV TEAMS="" \
