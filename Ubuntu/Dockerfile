@@ -1,4 +1,5 @@
-FROM registry.gitlab.com/jitesoft/dockerfiles/go/ubuntu:latest AS stage0
+# syntax = docker/dockerfile:experimental
+FROM --platform=$BUILDPLATFORM registry.gitlab.com/jitesoft/dockerfiles/go/ubuntu:latest AS stage0
 ARG TARGETARCH
 ARG VERSION
 ENV GOARCH="${TARGETARCH}" \
