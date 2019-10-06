@@ -10,23 +10,14 @@ build:ubuntu:
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   variables:
     DOCKER_BUILDKIT: 1
-  before_script:
-    - apk add --no-cache wget grep
+  script:
+    - cd Alpine
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
     - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
-  script:
-    - cd Ubuntu
-    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --label "com.jitesoft.app.keybase-sshca.verson=${VERSION}" --build-arg VERSION="${VERSION}" .
-    - TAGS="latest ${VERSION} ${VERSION_SHORT}"
-    - |
-      for TAG in $TAGS; do
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${TAG}
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} jitesoft/keybase-sshca:${TAG}
-        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} quay.io/jitesoft/keybase-sshca:${TAG}
-        docker push ${CI_REGISTRY_IMAGE}:${TAG}
-        docker push jitesoft/keybase-sshca:${TAG}
-        docker push quay.io/jitesoft/keybase-sshca:${TAG}
-      done
+    - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}" "latest,${VERSION}")
+    #    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
+    - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
+  tags: [ jitesoft, arm64, amd64, buildx ]
 
 build:alpine:
   stage: build
@@ -38,7 +29,7 @@ build:alpine:
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
     - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
     - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}/alpine" "latest,${VERSION}")
-#    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
+    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
     - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
   tags: [ jitesoft, arm64, amd64, buildx ]
 
