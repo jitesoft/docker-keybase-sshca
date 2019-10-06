@@ -15,8 +15,11 @@ build:ubuntu:
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
     - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
     - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}" "latest,${VERSION}")
-    #    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
+    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest,${VERSION},${VERSION_SHORT}") ${TAG_LIST}"
     - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
+    - docker pull ${CI_REGISTRY_IMAGE}:latest
+    - helper multitag ${CI_REGISTRY_IMAGE}:latest quay.io/jitesoft/keybase-sshca:latest quay.io/jitesoft/keybase-sshca:${VERSION} quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}
+    - helper multipush quay.io/jitesoft/keybase-sshca:latest quay.io/jitesoft/keybase-sshca:${VERSION} quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}
   tags: [ jitesoft, arm64, amd64, buildx ]
 
 build:alpine:
@@ -31,6 +34,8 @@ build:alpine:
     - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}/alpine" "latest,${VERSION}")
     - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
     - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
+    - helper multitag ${CI_REGISTRY_IMAGE}/alpine:latest quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
+    - helper multipush quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
   tags: [ jitesoft, arm64, amd64, buildx ]
 
 scan:ubuntu:
