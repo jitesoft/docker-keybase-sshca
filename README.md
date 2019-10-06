@@ -9,7 +9,7 @@ This image contains the [Keybase](https://keybase.io/) and [Keybase-sshca](https
 ## What is Keybase SSH CA?
 
 A bot!, a chat bot! Which you can use as a certificate authority to sign ssh keys for usage on your servers!  
-Easiest way to use it is via the `kssh` utility which is possible to download at the [official repository](https://github.com/keybase/bot-sshca/blob/master/LICENSE).  
+Easiest way to use it is via the `kssh` utility which is possible to download at the [official repository](https://github.com/keybase/bot-sshca).  
 
 ## Tags
 
@@ -17,21 +17,27 @@ Tags are based on the keybase-sshca version.
 As of current releases, the versions contains part of the commit sha suffixed, every build will include that as a 
 tag too: `1.0.0-7803a8d`
 
+Keybase-sshca is built from source and compiled for amd64 and arm64/aarch64.
+
 ### Docker Hub
 
 * `jitesoft/keybase-sshca`
-* `latest`, `1.0.0`
+* `latest`, `1.1.0`
+* `latest-alpine`, `1.1.0-alpine`
 
 ### GitLab
 
 * `registry.gitlab.com/jitesoft/dockerfiles/keybase-sshca`
-  * `latest`, `1.0.0`
+  * `latest`, `1.1.0`
+* `registry.gitlab.com/jitesoft/dockerfiles/keybase-sshca/alpine`
+  * `latest`, `1.1.0`
 
 ### Quay.io
 
 * `quay.io/jitesoft/keybase-sshca`
-  * `latest`, `1.0.0`
-
+  * `latest`, `1.1.0`
+  * `latest-alpine`, `1.1.0-alpine`
+  
 Dockerfile can be found at [GitLab](https://gitlab.com/jitesoft/dockerfiles/keybase-sshca) and [GitHub](https://github.com/jitesoft/docker-keybase-sshca).
 
 ### Image labels
