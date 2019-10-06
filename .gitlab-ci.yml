@@ -5,9 +5,9 @@ stages:
   - build
   - scan
 
-build:docker:
+build:ubuntu:
   stage: build
-  image: registry.gitlab.com/jitesoft/dockerfiles/docker:latest
+  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   variables:
     DOCKER_BUILDKIT: 1
   before_script:
@@ -15,6 +15,7 @@ build:docker:
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
     - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
   script:
+    - cd ubuntu
     - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --label "com.jitesoft.app.keybase-sshca.verson=${VERSION}" --build-arg VERSION="${VERSION}" .
     - TAGS="latest ${VERSION} ${VERSION_SHORT}"
     - |
@@ -27,7 +28,25 @@ build:docker:
         docker push quay.io/jitesoft/keybase-sshca:${TAG}
       done
 
-scan:
+build:alpine:
+  stage: build
+  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
+  variables:
+    DOCKER_BUILDKIT: 1
+  script:
+    - cd Alpine
+    - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
+    - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
+    - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}/alpine" "latest,${VERSION}")
+#    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
+    - docker buildx --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
+
+scan:ubuntu:
   extends: .container_scanning
   variables:
     SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}:latest"
+
+scan:alpine:
+  extends: .container_scanning
+  variables:
+    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/alpine:latest"

@@ -39,4 +39,4 @@ RUN gpg --keyserver pgp.mit.edu --recv-keys "${FINGERPRINT}" || \
 
 USER keybase
 ENTRYPOINT ["entrypoint"]
-CMD ["keybaseca", "service"]
+CMD ["keybaseca", "--help"]
