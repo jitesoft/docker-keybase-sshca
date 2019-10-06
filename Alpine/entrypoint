@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ash
 
 # To get the acutal path to the CA certificate, we remove the 'basename' from the
 # CA_KEY_LOCATION variable (as the location variable is pointing to the actual key).
@@ -11,7 +11,7 @@ fi
 
 echo "Starting keybase as a background service..."
 # Start 'run_keybase' in the background (-g flag disables the GUI).
-nohup bash -c "run_keybase -g &"
+nohup ash -c "run_keybase -g &"
 sleep 3
 echo "Connecting to keybase server..."
 
