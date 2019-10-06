@@ -11,7 +11,7 @@ build:ubuntu:
   variables:
     DOCKER_BUILDKIT: 1
   script:
-    - cd Alpine
+    - cd Ubuntu
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
     - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
     - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}" "latest,${VERSION}")

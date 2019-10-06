@@ -23,7 +23,6 @@ LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       com.jitesoft.project.registry.uri="registry.gitlab.com/jitesoft/dockerfiles/keybase-sshca" \
       com.jitesoft.app.keybase.ssh-ca="${VERSION}"
 
-
 USER root
 COPY --from=stage0 /usr/bin/keybaseca /usr/local/bin/keybaseca
 COPY ./entrypoint /usr/bin/entrypoint
