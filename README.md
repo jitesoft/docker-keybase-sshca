@@ -22,21 +22,21 @@ Keybase-sshca is built from source and compiled for amd64 and arm64/aarch64.
 ### Docker Hub
 
 * `jitesoft/keybase-sshca`
-* `latest`, `1.1.0`
-* `latest-alpine`, `1.1.0-alpine`
+    * `latest`, `1.1.0`
+    * `latest-alpine`, `1.1.0-alpine`
 
 ### GitLab
 
 * `registry.gitlab.com/jitesoft/dockerfiles/keybase-sshca`
-  * `latest`, `1.1.0`
+    * `latest`, `1.1.0`
 * `registry.gitlab.com/jitesoft/dockerfiles/keybase-sshca/alpine`
-  * `latest`, `1.1.0`
+    * `latest`, `1.1.0`
 
 ### Quay.io
 
 * `quay.io/jitesoft/keybase-sshca`
-  * `latest`, `1.1.0`
-  * `latest-alpine`, `1.1.0-alpine`
+    * `latest`, `1.1.0`
+    * `latest-alpine`, `1.1.0-alpine`
   
 Dockerfile can be found at [GitLab](https://gitlab.com/jitesoft/dockerfiles/keybase-sshca) and [GitHub](https://github.com/jitesoft/docker-keybase-sshca).
 
