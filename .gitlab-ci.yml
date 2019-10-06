@@ -34,6 +34,7 @@ build:alpine:
     - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}/alpine" "latest,${VERSION}")
     - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
     - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
+    - docker pull ${CI_REGISTRY_IMAGE}/alpine:latest
     - helper multitag ${CI_REGISTRY_IMAGE}/alpine:latest quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
     - helper multipush quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
   tags: [ jitesoft, arm64, amd64, buildx ]
