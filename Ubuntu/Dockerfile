@@ -30,7 +30,7 @@ COPY ./entrypoint /usr/bin/entrypoint
 
 RUN apt-get update \
  && apt-get install -y openssh-client ca-certificates \
- && chmod +x /usr/bin/keybaseca /usr/bin/entrypoint \
+ && chmod +x /usr/local/bin/keybaseca /usr/bin/entrypoint \
  && rm -rf /var/lib/apt/lists/* \
  && apt-get clean
 
