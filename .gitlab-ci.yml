@@ -15,7 +15,7 @@ build:ubuntu:
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
     - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
   script:
-    - cd ubuntu
+    - cd Ubuntu
     - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --label "com.jitesoft.app.keybase-sshca.verson=${VERSION}" --build-arg VERSION="${VERSION}" .
     - TAGS="latest ${VERSION} ${VERSION_SHORT}"
     - |
