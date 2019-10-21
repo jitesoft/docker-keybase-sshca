@@ -29,6 +29,8 @@ COPY --from=stage0 /usr/bin/keybaseca /usr/local/bin/keybaseca
 COPY ./entrypoint /usr/bin/entrypoint
 
 RUN apt-get update \
+ && mkdir /var/log/keybase \
+ && chown keybase:keybase /var/log/keybase \
  && apt-get install -y openssh-client ca-certificates \
  && chmod +x /usr/local/bin/keybaseca /usr/bin/entrypoint \
  && rm -rf /var/lib/apt/lists/* \

@@ -28,8 +28,10 @@ COPY --from=stage0 /usr/bin/keybaseca /usr/local/bin/keybaseca
 COPY ./entrypoint /usr/local/bin/entrypoint
 
 RUN apk add --no-cache openssh-client ca-certificates \
- && chmod +x /usr/local/bin/keybaseca \
- && chmod +x /usr/local/bin/entrypoint
+ && mkdir /var/log/keybase \
+ && chown keybase:keybase /var/log/keybase \
+ && chmod -R +x /usr/local/bin \
+ && chmod -R +x /usr/local/bin
 
 USER keybase
 ENV TEAMS="" \

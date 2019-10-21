@@ -10,7 +10,8 @@ if [[ ! -d "${CERT_PATH}" ]]; then
 fi
 
 echo "Starting keybase as a background service..."
-nohup keybase --debug --use-default-log-file service --auto-forked &
+nohup keybase-redirector /keybase >> /var/log/keybase/redirector.log 2>&1 &
+keybase --debug --use-default-log-file service --auto-forked &>> /var/log/keybase/keybase.log &
 
 # Start 'run_keybase' in the background (-g flag disables the GUI).
 #nohup bash -c "run_keybase -g &"
