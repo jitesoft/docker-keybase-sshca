@@ -10,8 +10,9 @@ if [[ ! -d "${CERT_PATH}" ]]; then
 fi
 
 echo "Starting keybase as a background service..."
-nohup redirector /keybase >> /var/log/keybase/redirector.log &
-nohup keybase --debug --use-default-log-file service --auto-forked >> /var/log/keybase/keybase.log &
+nohup kbfsfuse >> /var/log/keybase/kbfsfuse.log 2>&1 &
+nohup redirector /keybase >> /var/log/keybase/redirector.log 2>&1 &
+nohup keybase service --auto-forked >> /var/log/keybase/keybase.log 2>&1 &
 sleep 3
 echo "Connecting to keybase server..."
 
