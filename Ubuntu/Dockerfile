@@ -32,7 +32,7 @@ RUN apt-get update \
  && mkdir /var/log/keybase \
  && chown keybase:keybase /var/log/keybase \
  && apt-get install -y openssh-client ca-certificates \
- && chmod +x /usr/local/bin/keybaseca /usr/bin/entrypoint \
+ && chmod -R +x /usr/local/bin \
  && rm -rf /var/lib/apt/lists/* \
  && apt-get clean
 

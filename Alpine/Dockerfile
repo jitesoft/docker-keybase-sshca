@@ -30,7 +30,6 @@ COPY ./entrypoint /usr/local/bin/entrypoint
 RUN apk add --no-cache openssh-client ca-certificates \
  && mkdir /var/log/keybase \
  && chown keybase:keybase /var/log/keybase \
- && chmod -R +x /usr/local/bin \
  && chmod -R +x /usr/local/bin
 
 USER keybase
