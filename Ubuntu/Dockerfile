@@ -50,4 +50,4 @@ ENV TEAMS="" \
     KEYBASE_SSHCA_LOG_DIR="/home/keybase/.cache/keybase"
 
 ENTRYPOINT ["entrypoint"]
-CMD ["keybaseca", "--help"]
+CMD ["keybaseca", "service"]
