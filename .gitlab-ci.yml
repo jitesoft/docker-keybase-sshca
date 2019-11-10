@@ -20,7 +20,7 @@ build:ubuntu:
     - docker pull ${CI_REGISTRY_IMAGE}:latest
     - helper multitag ${CI_REGISTRY_IMAGE}:latest quay.io/jitesoft/keybase-sshca:latest quay.io/jitesoft/keybase-sshca:${VERSION} quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}
     - helper multipush quay.io/jitesoft/keybase-sshca:latest quay.io/jitesoft/keybase-sshca:${VERSION} quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}
-  tags: [ jitesoft, arm64, amd64, buildx ]
+  tags: [ jitesoft, protected, buildx ]
 
 build:alpine:
   stage: build
@@ -37,7 +37,7 @@ build:alpine:
     - docker pull ${CI_REGISTRY_IMAGE}/alpine:latest
     - helper multitag ${CI_REGISTRY_IMAGE}/alpine:latest quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
     - helper multipush quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
-  tags: [ jitesoft, arm64, amd64, buildx ]
+  tags: [ jitesoft, protected, buildx ]
 
 scan:ubuntu:
   extends: .container_scanning
