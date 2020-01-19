@@ -11,9 +11,11 @@ stages:
   script:
     - apk add --no-cache wget grep tar curl
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
-    - mkdir binaries
     - printf ${VERSION} > binaries/version.txt
+    - mkdir binaries
+    - mkdir -p ${GOPATH}/github.com/keybase/bot-sshca
     - curl -L https://github.com/keybase/bot-sshca/archive/${VERSION}.tar.gz -o /tmp/kssh-bot.tar.gz
+    - tar -xzf /tmp/kssh-bot.tar.gz -C ${GOPATH}/github.com/keybase/bot-sshca --strip-components=1
     - go build -ldflags "-w -s -X main.VersionNumber=${VERSION}" ${GOPATH}/github.com/keybase/bot-sshca/src/cmd/keybaseca/keybaseca.go
     - tar -zcf keybaseca binaries/keybaseca-${ARCH}.tar.gz
   artifacts:
@@ -45,9 +47,12 @@ build:src:alpine:arm64:
     - apt-get update
     - apt-get install -y wget grep tar curl
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
+    - printf ${VERSION} > binaries/version.txt
     - mkdir binaries
+    - mkdir -p ${GOPATH}/github.com/keybase/bot-sshca
     - printf ${VERSION} > binaries/version.txt
     - curl -L https://github.com/keybase/bot-sshca/archive/${VERSION}.tar.gz -o /tmp/kssh-bot.tar.gz
+    - tar -xzf /tmp/kssh-bot.tar.gz -C ${GOPATH}/github.com/keybase/bot-sshca --strip-components=1
     - go build -ldflags "-w -s -X main.VersionNumber=${VERSION}" ${GOPATH}/github.com/keybase/bot-sshca/src/cmd/keybaseca/keybaseca.go
     - tar -zcf keybaseca binaries/keybaseca-${ARCH}.tar.gz
   artifacts:
