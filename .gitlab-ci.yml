@@ -5,46 +5,129 @@ stages:
   - build
   - scan
 
-build:ubuntu:
+.build:src:alpine:
   stage: build
-  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
-  variables:
-    DOCKER_BUILDKIT: 1
+  image: registry.gitlab.com/jitesoft/dockerfiles/go:latest
   script:
-    - cd Ubuntu
+    - apk add --no-cache wget grep tar
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
-    - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
-    - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}" "latest,${VERSION}")
-    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest,${VERSION},${VERSION_SHORT}") ${TAG_LIST}"
-    - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
-    - docker pull ${CI_REGISTRY_IMAGE}:latest
-    - helper multitag ${CI_REGISTRY_IMAGE}:latest quay.io/jitesoft/keybase-sshca:latest quay.io/jitesoft/keybase-sshca:${VERSION} quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}
-    - helper multipush quay.io/jitesoft/keybase-sshca:latest quay.io/jitesoft/keybase-sshca:${VERSION} quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}
-  tags: [ jitesoft, protected, buildx ]
+    - mkdir binaries
+    - printf ${VERSION} > binaries/version.txt
+    - curl -L https://github.com/keybase/bot-sshca/archive/${VERSION}.tar.gz -o /tmp/kssh-bot.tar.gz
+    - go build -ldflags "-w -s -X main.VersionNumber=${VERSION}" ${GOPATH}/github.com/keybase/bot-sshca/src/cmd/keybaseca/keybaseca.go
+    - tar -zcf keybaseca binaries/keybaseca-${ARCH}.tar.gz
+  artifacts:
+    paths:
+      - binaries
+    expire_in: 1 hour
 
-build:alpine:
+build:src:alpine:amd64:
+  extends: .build:src:alpine
+  tags:
+    - native-amd64
+  variables:
+    ARCH: "amd64"
+    GO111MODULE: "on"
+
+build:src:alpine:arm64:
+  extends: .build:src:alpine
+  tags:
+    - native-aarch64
+  variables:
+    ARCH: "arm64"
+    GO111MODULE: "on"
+
+
+.build:src:ubuntu:
   stage: build
-  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
-  variables:
-    DOCKER_BUILDKIT: 1
+  image: registry.gitlab.com/jitesoft/dockerfiles/ubuntu/go:latest
   script:
-    - cd Alpine
+    - apt-get update
+    - apt-get install -y wget grep tar
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
-    - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
-    - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}/alpine" "latest,${VERSION}")
-    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
-    - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
-    - docker pull ${CI_REGISTRY_IMAGE}/alpine:latest
-    - helper multitag ${CI_REGISTRY_IMAGE}/alpine:latest quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
-    - helper multipush quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
-  tags: [ jitesoft, protected, buildx ]
+    - mkdir binaries
+    - printf ${VERSION} > binaries/version.txt
+    - curl -L https://github.com/keybase/bot-sshca/archive/${VERSION}.tar.gz -o /tmp/kssh-bot.tar.gz
+    - go build -ldflags "-w -s -X main.VersionNumber=${VERSION}" ${GOPATH}/github.com/keybase/bot-sshca/src/cmd/keybaseca/keybaseca.go
+    - tar -zcf keybaseca binaries/keybaseca-${ARCH}.tar.gz
+  artifacts:
+    paths:
+      - binaries
+    expire_in: 1 hour
 
-scan:ubuntu:
-  extends: .container_scanning
+build:src:ubuntu:amd64:
+  extends: .build:src:ubuntu
+  tags:
+    - native-amd64
   variables:
-    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}:latest"
+    ARCH: "amd64"
+    GO111MODULE: "on"
 
-scan:alpine:
-  extends: .container_scanning
+build:src:ubuntu:arm64:
+  extends: .build:src:ubuntu
+  tags:
+    - native-aarch64
   variables:
-    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/alpine:latest"
+    ARCH: "arm64"
+    GO111MODULE: "on"
+
+
+
+#containerize:alpine:
+#  needs:
+#    - build:src:alpine:amd64
+#    - build:src:alpine:arm64
+#  stage: build
+#  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
+#  script:
+#    - VERSION=$(cat version.txt)
+#    - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
+#    - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}/alpine" "latest,${VERSION}")
+#    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
+#    - docker buildx build --platform linux/amd64,linux/arm64 --push ${TAG_LIST} --build-arg VERSION="${VERSION}" --progress plain
+#  tags: [ jitesoft, protected, buildx ]
+#
+#build:ubuntu:
+#  stage: build
+#  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
+#  variables:
+#    DOCKER_BUILDKIT: 1
+#  script:
+#    - cd Ubuntu
+#    - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
+#    - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
+#    - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}" "latest,${VERSION}")
+#    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest,${VERSION},${VERSION_SHORT}") ${TAG_LIST}"
+#    - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
+#    - docker pull ${CI_REGISTRY_IMAGE}:latest
+#    - helper multitag ${CI_REGISTRY_IMAGE}:latest quay.io/jitesoft/keybase-sshca:latest quay.io/jitesoft/keybase-sshca:${VERSION} quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}
+#    - helper multipush quay.io/jitesoft/keybase-sshca:latest quay.io/jitesoft/keybase-sshca:${VERSION} quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}
+#  tags: [ jitesoft, protected, buildx ]
+#
+#build:alpine:
+#  stage: build
+#  image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
+#  variables:
+#    DOCKER_BUILDKIT: 1
+#  script:
+#    - cd Alpine
+#    - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
+#    - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
+#    - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}/alpine" "latest,${VERSION}")
+#    - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
+#    - docker buildx build --platform "linux/arm64,linux/amd64" --build-arg VERSION="${VERSION}" --progress plain --push ${TAG_LIST} .
+#    - docker pull ${CI_REGISTRY_IMAGE}/alpine:latest
+#    - helper multitag ${CI_REGISTRY_IMAGE}/alpine:latest quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
+#    - helper multipush quay.io/jitesoft/keybase-sshca:latest-alpine quay.io/jitesoft/keybase-sshca:${VERSION}-alpine quay.io/jitesoft/keybase-sshca:${VERSION_SHORT}-alpine
+#  tags: [ jitesoft, protected, buildx ]
+#
+#scan:ubuntu:
+#  extends: .container_scanning
+#  variables:
+#    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}:latest"
+#
+#scan:alpine:
+#  extends: .container_scanning
+#  variables:
+#    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/alpine:latest"
+#
