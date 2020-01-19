@@ -40,7 +40,7 @@ build:src:alpine:arm64:
 
 .build:src:ubuntu:
   stage: build
-  image: registry.gitlab.com/jitesoft/dockerfiles/ubuntu/go:latest
+  image: registry.gitlab.com/jitesoft/dockerfiles/go/ubuntu:latest
   script:
     - apt-get update
     - apt-get install -y wget grep tar curl
