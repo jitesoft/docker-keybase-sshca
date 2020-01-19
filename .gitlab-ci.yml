@@ -9,7 +9,7 @@ stages:
   stage: build
   image: registry.gitlab.com/jitesoft/dockerfiles/go:latest
   script:
-    - apk add --no-cache wget grep tar
+    - apk add --no-cache wget grep tar curl
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
     - mkdir binaries
     - printf ${VERSION} > binaries/version.txt
@@ -43,7 +43,7 @@ build:src:alpine:arm64:
   image: registry.gitlab.com/jitesoft/dockerfiles/ubuntu/go:latest
   script:
     - apt-get update
-    - apt-get install -y wget grep tar
+    - apt-get install -y wget grep tar curl
     - VERSION=$(wget -qO- https://github.com/keybase/bot-sshca/releases | grep -oP '(?<=releases\/tag\/)(.*?)(?=\">)' | awk 'NR==1{print $1}')
     - mkdir binaries
     - printf ${VERSION} > binaries/version.txt
