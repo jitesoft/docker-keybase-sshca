@@ -13,7 +13,23 @@ echo "Starting keybase as a background service..."
 nohup kbfsfuse >> /var/log/keybase/kbfsfuse.log 2>&1 &
 nohup redirector /keybase >> /var/log/keybase/redirector.log 2>&1 &
 nohup keybase service --auto-forked >> /var/log/keybase/keybase.log 2>&1 &
-sleep 3
+
+echo "Waiting for background service to become available..."
+sleep 5
+i=0
+while [[ $i -lt 5 ]]
+do
+  ((i=i+1))
+  if [[ -S /home/keybase/.config/keybase/keybased.sock ]]; then
+    break
+  fi
+  if [[ $i == 5 ]]; then
+    echo "Background service did not become not available after $i attempts (exiting)..."
+    exit 1
+  fi
+  sleep 3
+done
+
 echo "Connecting to keybase server..."
 
 # Check if there is a file to use as username, else use env variable.
