@@ -16,6 +16,9 @@ stages:
     - printf ${VERSION} > binaries/version.txt
     - curl -L https://github.com/keybase/bot-sshca/archive/${VERSION}.tar.gz -o /tmp/kssh-bot.tar.gz
     - tar -xzf /tmp/kssh-bot.tar.gz -C ${GOPATH}/github.com/keybase/bot-sshca --strip-components=1
+    - cd ${GOPATH}/github.com/keybase/bot-sshca
+    - go mod download
+    - cd ${CI_PROJECT_DIR}
     - go build -ldflags "-w -s -X main.VersionNumber=${VERSION}" ${GOPATH}/github.com/keybase/bot-sshca/src/cmd/keybaseca/keybaseca.go
     - tar -zcf keybaseca binaries/keybaseca-${ARCH}.tar.gz
   artifacts:
@@ -53,6 +56,9 @@ build:src:alpine:arm64:
     - printf ${VERSION} > binaries/version.txt
     - curl -L https://github.com/keybase/bot-sshca/archive/${VERSION}.tar.gz -o /tmp/kssh-bot.tar.gz
     - tar -xzf /tmp/kssh-bot.tar.gz -C ${GOPATH}/github.com/keybase/bot-sshca --strip-components=1
+    - cd ${GOPATH}/github.com/keybase/bot-sshca
+    - go mod download
+    - cd ${CI_PROJECT_DIR}
     - go build -ldflags "-w -s -X main.VersionNumber=${VERSION}" ${GOPATH}/github.com/keybase/bot-sshca/src/cmd/keybaseca/keybaseca.go
     - tar -zcf binaries/keybaseca-${ARCH}.tar.gz keybaseca
   artifacts:
