@@ -3,6 +3,7 @@ include:
 
 stages:
   - build
+  - containerize
   - scan
 
 .build:src:alpine:
@@ -92,7 +93,7 @@ containerize:alpine:
   needs:
     - build:src:alpine:amd64
     - build:src:alpine:arm64
-  stage: build
+  stage: containerize
   variables:
     GIT_STRATEGY: none
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
@@ -108,7 +109,7 @@ containerize:ubuntu:
   needs:
     - build:src:ubuntu:amd64
     - build:src:ubuntu:arm64
-  stage: build
+  stage: containerize
   variables:
     GIT_STRATEGY: none
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
