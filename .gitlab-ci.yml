@@ -23,7 +23,7 @@ stages:
     - cd ${CI_PROJECT_DIR}
     - mv Alpine/entrypoint binaries/entrypoint
     - mv Alpine/Dockerfile ${CI_PROJECT_DIR}/Dockerfile
-    - $(cd ${GOPATH}/github.com/keybase/bot-sshca && tar -czf ${CI_PROJECT_DIR}/binaries/keybase-${ARCH}.tar.gz keybaseca)
+    - cp ${GOPATH}/github.com/keybase/bot-sshca/keybaseca ${CI_PROJECT_DIR}/binaries/keybaseca-${ARCH}
   artifacts:
     paths:
       - binaries
@@ -66,7 +66,7 @@ build:src:alpine:arm64:
     - cd ${CI_PROJECT_DIR}
     - mv Ubuntu/entrypoint binaries/entrypoint
     - mv Ubuntu/Dockerfile ${CI_PROJECT_DIR}/Dockerfile
-    - $(cd ${GOPATH}/github.com/keybase/bot-sshca && tar -czf ${CI_PROJECT_DIR}/binaries/keybase-${ARCH}.tar.gz keybaseca)
+    - cp ${GOPATH}/github.com/keybase/bot-sshca/keybaseca ${CI_PROJECT_DIR}/binaries/keybaseca-${ARCH}
   artifacts:
     paths:
       - binaries

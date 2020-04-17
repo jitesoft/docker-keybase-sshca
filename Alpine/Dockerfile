@@ -1,6 +1,7 @@
 # syntax = docker/dockerfile:experimental
 FROM registry.gitlab.com/jitesoft/dockerfiles/keybase/alpine:latest
-ARG VERSION="1.1.0-de27ce6"
+ARG VERSION
+ARG TARGETARCH
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       maintainer.org="Jitesoft" \
       maintainer.org.uri="https://jitesoft.com" \
@@ -13,7 +14,8 @@ LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
 USER root
 
 RUN --mount=type=bind,source=./binaries,target=/tmp/bin \
-    cp /tmp/bin/entrypoint /tmp/bin/keybaseca /usr/local/bin \
+    cp /tmp/bin/entrypoint /usr/local/bin \
+ && cp /tmp/bin/keybaseca-${TARGETARCH} /usr/local/bin/keybaseca \
  && apk add --no-cache openssh-client ca-certificates \
  && mkdir /var/log/keybase \
  && chown keybase:keybase /var/log/keybase \
