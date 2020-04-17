@@ -98,7 +98,7 @@ containerize:alpine:
     GIT_STRATEGY: none
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   script:
-    - VERSION=$(cat version.txt)
+    - VERSION=$(cat binaries/version.txt)
     - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
     - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}/alpine" "latest,${VERSION}")
     - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest-alpine,${VERSION}-alpine,${VERSION_SHORT}-alpine") ${TAG_LIST}"
@@ -114,7 +114,7 @@ containerize:ubuntu:
     GIT_STRATEGY: none
   image: registry.gitlab.com/jitesoft/dockerfiles/misc:latest
   script:
-    - VERSION=$(cat version.txt)
+    - VERSION=$(cat binaries/version.txt)
     - VERSION_SHORT=$(echo ${VERSION} | cut -d'-' -f 1)
     - TAG_LIST=$(helper "${CI_REGISTRY_IMAGE}" "latest,${VERSION}")
     - TAG_LIST="$(helper "jitesoft/keybase-sshca" "latest,${VERSION},${VERSION_SHORT}") ${TAG_LIST}"
