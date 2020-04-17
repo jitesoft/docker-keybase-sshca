@@ -1,17 +1,4 @@
 # syntax = docker/dockerfile:experimental
-FROM --platform=$BUILDPLATFORM registry.gitlab.com/jitesoft/dockerfiles/go:latest as stage0
-ARG TARGETARCH
-ARG VERSION
-ENV GOARCH="${TARGETARCH}" \
-    GO111MODULE="on"
-
-RUN apk add --no-cache tar curl \
- && mkdir -p ${GOPATH}/github.com/keybase/bot-sshca \
- && curl -L https://github.com/keybase/bot-sshca/archive/${VERSION}.tar.gz -o /tmp/kssh-bot.tar.gz \
- && tar -xzf /tmp/kssh-bot.tar.gz -C ${GOPATH}/github.com/keybase/bot-sshca --strip-components=1 \
- && go build -ldflags "-w -s -X main.VersionNumber=$VERSION" ${GOPATH}/github.com/keybase/bot-sshca/src/cmd/keybaseca/keybaseca.go \
- && mv ./keybaseca /usr/bin/keybaseca
-
 FROM registry.gitlab.com/jitesoft/dockerfiles/keybase/alpine:latest
 ARG VERSION="1.1.0-de27ce6"
 LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
@@ -24,10 +11,10 @@ LABEL maintainer="Johannes Tegnér <johannes@jitesoft.com>" \
       com.jitesoft.app.keybase.ssh-ca="${VERSION}"
 
 USER root
-COPY --from=stage0 /usr/bin/keybaseca /usr/local/bin/keybaseca
-COPY ./entrypoint /usr/local/bin/entrypoint
 
-RUN apk add --no-cache openssh-client ca-certificates \
+RUN --mount=type=bind,source=./binaries,target=/tmp/bin \
+    cp /tmp/bin/entrypoint /tmp/bin/keybaseca /usr/local/bin \
+ && apk add --no-cache openssh-client ca-certificates \
  && mkdir /var/log/keybase \
  && chown keybase:keybase /var/log/keybase \
  && chmod -R +x /usr/local/bin
