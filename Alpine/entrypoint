@@ -15,7 +15,7 @@ nohup redirector /keybase >> /var/log/keybase/redirector.log 2>&1 &
 nohup keybase service --auto-forked >> /var/log/keybase/keybase.log 2>&1 &
 
 echo "Waiting for background service to become available..."
-sleep 5
+sleep ${KEYBASE_TIMEOUT:-5}
 i=0
 while [[ $i -lt 5 ]]
 do
@@ -24,7 +24,7 @@ do
     break
   fi
   if [[ $i == 5 ]]; then
-    echo "Background service did not become not available after $i attempts (exiting)..."
+    echo "Background service didn't become available after $i attempts (exiting)..."
     exit 1
   fi
   sleep 3
