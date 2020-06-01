@@ -1,5 +1,6 @@
 include:
-  - https://gitlab.com/jitesoft/gitlab-ci-lib/raw/master/container_scan-v2.yml
+  - file: /Scan/trivy.yml
+    project: jitesoft/gitlab-ci-lib
 
 stages:
   - build
@@ -121,13 +122,13 @@ containerize:ubuntu:
     - docker buildx build --platform linux/amd64,linux/arm64 --push ${TAG_LIST} --build-arg VERSION="${VERSION}" --progress plain .
   tags: [ jitesoft, protected, buildx ]
 
-#scan:ubuntu:
-#  extends: .container_scanning
-#  variables:
-#    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}:latest"
-#
-#scan:alpine:
-#  extends: .container_scanning
-#  variables:
-#    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/alpine:latest"
-#
+scan:ubuntu:
+  extends: .container_scanning
+  variables:
+    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}:latest"
+
+scan:alpine:
+  extends: .container_scanning
+  variables:
+    SCANNING_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/alpine:latest"
+
